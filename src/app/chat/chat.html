@@ -14,16 +14,24 @@
         </ul>
     </div>
     @if (conectado) {
-        <div class="card-body" style="overflow-y: scroll; height: 360px;"></div>
+        <div class="card-body" style="overflow-y: scroll; height: 360px;">
+            <ul class="list-group list-group-flush">
+                @for (mensaje of mensajes; track $index) {
+                    <li class="list-group-item list-group-item-light">
+                        {{mensaje.fecha | date:'shortTime'}} : {{ mensaje.texto}}
+                    </li>
+                }
+            </ul>
+        </div>
     }
     @if (conectado) {
         <div class="card-footer d-flex">
             <form class="">
                 <div class="form-group mx-3">
-                    <input type="text" class="form-control" placeholder="Escribe tu mensaje aquí..." name="texto">             
+                    <input type="text" [(ngModel)]="mensaje.texto" class="form-control" placeholder="Escribe tu mensaje aquí..." name="texto">             
                 </div>
             </form>
-            <button class="btn btn-primary" type="submit">Enviar</button>
+            <button class="btn btn-primary" type="submit" (click)="enviarMensaje()">Enviar</button>
         </div>
     }
 </div>
