@@ -3,13 +3,15 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Mensaje } from './models/mensaje';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-chat',
   imports: [
     FormsModule,
-    DatePipe],
+    DatePipe,
+    NgClass
+],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
 })
@@ -40,6 +42,8 @@ export class Chat implements OnInit {
         this.mensajes.push(mensaje);
         console.log(mensaje);
       });
+      this.mensaje.tipo = 'NUEVO_USUARIO';
+      this.client.publish({ destination: '/app/mensaje', body: JSON.stringify(this.mensaje) });
 
     }
 
@@ -59,6 +63,7 @@ export class Chat implements OnInit {
   }
 
   enviarMensaje(): void {
+    this.mensaje.tipo = 'MENSAJE';
     this.client.publish({
       destination: '/app/mensaje',
       body: JSON.stringify(this.mensaje)

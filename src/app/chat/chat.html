@@ -2,8 +2,13 @@
     <div class="card-header">
         <ul class="nav nav-pills card-header-pills">
             @if (!conectado) {
+                <li class="nav-item mr-2">
+                    <input type="text" [(ngModel)]="mensaje.username" class="form-control" placeholder="Tu Username..." name="username">
+                </li>
+            }
+            @if (!conectado) {
                 <li class="nav-item mx-2">
-                    <button class="btn btn-success" type="button" (click)="conectar()">Conectar</button>
+                    <button class="btn btn-success" type="button" (click)="conectar()" [disabled]="!mensaje.username">Conectar</button>
                 </li>
             }
             @if (conectado) {
@@ -18,7 +23,12 @@
             <ul class="list-group list-group-flush">
                 @for (mensaje of mensajes; track $index) {
                     <li class="list-group-item list-group-item-light">
-                        {{mensaje.fecha | date:'shortTime'}} : {{ mensaje.texto}}
+                        @if (mensaje.tipo=='NUEVO_USUARIO') {
+                            <span>{{mensaje.fecha | date:'shortTime'}} @ {{mensaje.texto}} {{mensaje.username}} </span>
+                        }
+                        @if (mensaje.tipo=='MENSAJE') {
+                            <span>{{mensaje.fecha | date:'shortTime'}} : {{mensaje.username}} dice:<br> {{mensaje.texto}}</span>
+                        }
                     </li>
                 }
             </ul>
