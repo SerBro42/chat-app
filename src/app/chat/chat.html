@@ -24,10 +24,14 @@
                 @for (mensaje of mensajes; track $index) {
                     <li class="list-group-item list-group-item-light">
                         @if (mensaje.tipo=='NUEVO_USUARIO') {
-                            <span>{{mensaje.fecha | date:'shortTime'}} @ {{mensaje.texto}} {{mensaje.username}} </span>
+                            <span>{{mensaje.fecha | date:'shortTime'}} @ {{mensaje.texto}} 
+                                <span [ngStyle]="{'color' : mensaje.color}">{{mensaje.username}}</span> 
+                            </span>
                         }
                         @if (mensaje.tipo=='MENSAJE') {
-                            <span>{{mensaje.fecha | date:'shortTime'}} : {{mensaje.username}} dice:<br> {{mensaje.texto}}</span>
+                            <span>{{mensaje.fecha | date:'shortTime'}} : 
+                                <span [ngStyle]="{'color' : mensaje.color}">{{mensaje.username}}</span> dice:<br> {{mensaje.texto}}
+                            </span>
                         }
                     </li>
                 }

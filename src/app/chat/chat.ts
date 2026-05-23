@@ -3,14 +3,15 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Mensaje } from './models/mensaje';
 import { FormsModule } from '@angular/forms';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe, NgClass, NgStyle } from '@angular/common';
 
 @Component({
   selector: 'app-chat',
   imports: [
     FormsModule,
     DatePipe,
-    NgClass
+    NgClass,
+    NgStyle
 ],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
@@ -39,6 +40,11 @@ export class Chat implements OnInit {
       this.client.subscribe('/chat/mensaje', (e) => { 
         let mensaje: Mensaje = JSON.parse(e.body) as Mensaje;
         mensaje.fecha = new Date(mensaje.fecha);
+
+        if(!this.mensaje.color && mensaje.tipo == 'NUEVO_USUARIO' && this.mensaje.username == mensaje.username){
+          this.mensaje.color = mensaje.color;
+        }
+
         this.mensajes.push(mensaje);
         console.log(mensaje);
       });
