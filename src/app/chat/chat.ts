@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Mensaje } from './models/mensaje';
@@ -27,7 +27,7 @@ export class Chat implements OnInit {
   escribiendo!: string;
   clienteId!: string;
 
-  constructor() {
+  constructor(private cdref: ChangeDetectorRef) {
     this.clienteId = 'id-' + new Date().getUTCMilliseconds() + '-' + Math.random().toString(36).substring(2);
   }
 
@@ -85,6 +85,10 @@ export class Chat implements OnInit {
       this.mensajes = [];
     }
     
+  }
+
+  ngAfterContentChecked() {
+    this.cdref.detectChanges();
   }
 
   conectar(): void {
