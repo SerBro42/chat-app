@@ -25,8 +25,11 @@ export class Chat implements OnInit {
   mensajes: Mensaje[] = [];
 
   escribiendo!: string;
+  clienteId!: string;
 
-  constructor() { }
+  constructor() {
+    this.clienteId = 'id-' + new Date().getUTCMilliseconds() + '-' + Math.random().toString(36).substring(2);
+  }
 
   ngOnInit() {
     this.client = new Client();
@@ -43,7 +46,8 @@ export class Chat implements OnInit {
         let mensaje: Mensaje = JSON.parse(e.body) as Mensaje;
         mensaje.fecha = new Date(mensaje.fecha);
 
-        if(!this.mensaje.color && mensaje.tipo == 'NUEVO_USUARIO' && this.mensaje.username == mensaje.username){
+        if(!this.mensaje.color && mensaje.tipo == 'NUEVO_USUARIO' && 
+          this.mensaje.username == mensaje.username) {
           this.mensaje.color = mensaje.color;
         }
 
@@ -59,6 +63,16 @@ export class Chat implements OnInit {
         }, 3000);
       });
 
+      this.client.subscribe('/chat/historial/' + this.clienteId, e => {
+        const historial = JSON.parse(e.body) as Mensaje[];
+        this.mensajes = historial.map(m => {
+          m.fecha = new Date(m.fecha);
+          return m;
+        }).reverse();
+      });
+
+      this.client.publish({ destination: '/app/historial', body: this.clienteId });
+
       this.mensaje.tipo = 'NUEVO_USUARIO';
       this.client.publish({ destination: '/app/mensaje', body: JSON.stringify(this.mensaje) });
 
@@ -67,6 +81,8 @@ export class Chat implements OnInit {
     this.client.onDisconnect = (frame) => {
       console.log('Desconectados: ' + !this.client.connected + ' : ' + frame);
       this.conectado = false;
+      this.mensaje = new Mensaje();
+      this.mensajes = [];
     }
     
   }
